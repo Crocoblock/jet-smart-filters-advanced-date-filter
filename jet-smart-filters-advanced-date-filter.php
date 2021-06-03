@@ -19,6 +19,7 @@ if ( ! defined( 'WPINC' ) ) {
 class Jet_Engine_Extend_Form_Actions {
 
 	private $base_mask = 'advanced_date::';
+	private $custom_query = null;
 
 	public function __construct() {
 		add_filter( 'jet-smart-filters/query/final-query', array( $this, 'apply_dates_filter' ), -999 );
@@ -46,9 +47,42 @@ class Jet_Engine_Extend_Form_Actions {
 				$fields = ! empty( $data[2] ) ? $data[2] : false;
 
 				if ( $type && $fields ) {
+
 					unset( $query['meta_query'][ $index ] );
 					$fields = explode( ',', str_replace( ', ', ',', $fields ) );
-					$query['meta_query'][] = $this->get_advanced_query( $fields, $meta_query['value'], $type );
+					$advanced_query = $this->get_advanced_query( $fields, $meta_query['value'], $type );
+
+					if ( $this->custom_query ) {
+
+						global $wpdb;
+
+						$table   = $wpdb->postmeta;
+						$field_1 = $fields[0];
+						$field_2 = $fields[1];
+						$value_1 = $meta_query['value'][0];
+						$value_2 = $meta_query['value'][1];
+
+						$post_ids_query = "SELECT pm1.post_id FROM `$table` AS pm1 INNER JOIN `$table` AS pm2 ON ( pm1.post_id = pm2.post_id ) WHERE ( ( ( pm1.meta_key = '$field_1' AND pm1.meta_value = '' ) AND ( pm2.meta_key = '$field_2' AND CAST( pm2.meta_value AS SIGNED ) BETWEEN $value_1 AND $value_2 ) ) OR ( ( pm1.meta_key = '$field_2' AND CAST( pm1.meta_value AS SIGNED ) BETWEEN $value_1 AND $value_2 ) AND ( pm2.meta_key = '$field_2' AND CAST( pm2.meta_value AS SIGNED ) BETWEEN $value_1 AND $value_2 ) ) )";
+
+						$post_ids = $wpdb->get_results( $post_ids_query );
+
+						if ( empty( $post_ids ) ) {
+							$query['post__in'] = 'not_found';
+						} else {
+
+							$ids = array();
+
+							foreach ( $post_ids as $id ) {
+								$ids[] = $id->post_id;
+							}
+
+							$query['post__in'] = $ids;
+						}
+
+					} else {
+						$query['meta_query'][] = $advanced_query;
+					}
+
 				}
 
 			}
@@ -61,6 +95,28 @@ class Jet_Engine_Extend_Form_Actions {
 	public function get_advanced_query( $fields, $values, $type ) {
 
 		$inside = false;
+		$add_custom = false;
+
+		switch ( $type ) {
+
+			case 'each':
+				$relation = 'AND';
+				break;
+
+			case 'each_empty':
+				$add_custom = true;
+				$relation = 'AND';
+				break;
+
+			case 'inside':
+				$inside = true;
+				$relation = 'OR';
+				break;
+
+			default:
+				$relation = 'OR';
+				break;
+		}
 
 		if ( 'each' === $type ) {
 			$relation = 'AND';
@@ -100,6 +156,10 @@ class Jet_Engine_Extend_Form_Actions {
 					'compare' => '>=',
 				),
 			);
+		}
+
+		if ( $add_custom ) {
+			$this->custom_query = true;
 		}
 
 		return $result;
