@@ -62,7 +62,7 @@ class Jet_Engine_Extend_Form_Actions {
 						$value_1 = $meta_query['value'][0];
 						$value_2 = $meta_query['value'][1];
 
-						$post_ids_query = "SELECT pm1.post_id FROM `$table` AS pm1 INNER JOIN `$table` AS pm2 ON ( pm1.post_id = pm2.post_id ) WHERE ( ( ( pm1.meta_key = '$field_1' AND pm1.meta_value = '' ) AND ( pm2.meta_key = '$field_2' AND CAST( pm2.meta_value AS SIGNED ) BETWEEN $value_1 AND $value_2 ) ) OR ( ( pm1.meta_key = '$field_2' AND CAST( pm1.meta_value AS SIGNED ) BETWEEN $value_1 AND $value_2 ) AND ( pm2.meta_key = '$field_2' AND CAST( pm2.meta_value AS SIGNED ) BETWEEN $value_1 AND $value_2 ) ) )";
+						$post_ids_query = "SELECT pm1.post_id FROM `$table` AS pm1 INNER JOIN `$table` AS pm2 ON ( pm1.post_id = pm2.post_id ) WHERE ( ( ( pm1.meta_key = '$field_1' AND pm1.meta_value = '' ) AND ( pm2.meta_key = '$field_2' AND CAST( pm2.meta_value AS SIGNED ) BETWEEN $value_1 AND $value_2 ) ) OR ( ( pm1.meta_key = '$field_1' AND CAST( pm1.meta_value AS SIGNED ) BETWEEN $value_1 AND $value_2 ) AND ( pm2.meta_key = '$field_2' AND pm2.meta_value = '' ) ) OR ( ( pm1.meta_key = '$field_2' AND CAST( pm1.meta_value AS SIGNED ) BETWEEN $value_1 AND $value_2 ) AND ( pm2.meta_key = '$field_2' AND CAST( pm2.meta_value AS SIGNED ) BETWEEN $value_1 AND $value_2 ) ) OR ( ( pm1.meta_key = '$field_1' AND pm1.meta_value = '' ) AND ( pm2.meta_key = '$field_2' AND pm2.meta_value = '' ) ) )";
 
 						$post_ids = $wpdb->get_results( $post_ids_query );
 
