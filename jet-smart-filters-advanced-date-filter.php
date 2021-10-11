@@ -49,7 +49,7 @@ class Jet_Engine_Extend_Form_Actions {
 				if ( $type && $fields ) {
 
 					unset( $query['meta_query'][ $index ] );
-					$fields = explode( ',', str_replace( ', ', ',', $fields ) );
+					$fields = explode( ';', str_replace( '; ', ';', $fields ) );
 					$advanced_query = $this->get_advanced_query( $fields, $meta_query['value'], $type );
 
 					if ( $this->custom_query ) {
