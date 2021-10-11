@@ -16,7 +16,7 @@ if ( ! defined( 'WPINC' ) ) {
 	die();
 }
 
-class Jet_Engine_Extend_Form_Actions {
+class Jet_Smart_Filters_Advanced_Date_Filter {
 
 	private $base_mask = 'advanced_date::';
 	private $custom_query = null;
@@ -168,4 +168,4 @@ class Jet_Engine_Extend_Form_Actions {
 
 }
 
-new Jet_Engine_Extend_Form_Actions();
+new Jet_Smart_Filters_Advanced_Date_Filter();
