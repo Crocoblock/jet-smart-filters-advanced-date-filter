@@ -96,6 +96,25 @@ class Jet_Smart_Filters_Advanced_Date_Filter {
 
 		$inside = false;
 		$add_custom = false;
+		
+		// pre-process case 'fields_inside' - when both post fields inside the range
+		if ( 'fields_inside' === $type ) {
+			return array(
+				'realtion' => 'AND',
+				array(
+					'key'     => $fields[0],
+					'value'   => $values[0],
+					'type'    => 'NUMERIC',
+					'compare' => '>=',
+				),
+				array(
+					'key'     => $fields[1],
+					'value'   => $values[1],
+					'type'    => 'NUMERIC',
+					'compare' => '<=',
+				),
+			);
+		}
 
 		switch ( $type ) {
 
@@ -116,15 +135,6 @@ class Jet_Smart_Filters_Advanced_Date_Filter {
 			default:
 				$relation = 'OR';
 				break;
-		}
-
-		if ( 'each' === $type ) {
-			$relation = 'AND';
-		} elseif ( 'inside' === $type ) {
-			$inside = true;
-			$relation = 'OR';
-		} else {
-			$relation = 'OR';
 		}
 
 		$result = array(
