@@ -100,7 +100,7 @@ class Jet_Smart_Filters_Advanced_Date_Filter {
 		// pre-process case 'fields_inside' - when both post fields inside the range
 		if ( 'fields_inside' === $type ) {
 			return array(
-				'realtion' => 'AND',
+				'relation' => 'AND',
 				array(
 					'key'     => $fields[0],
 					'value'   => $values[0],
@@ -152,7 +152,7 @@ class Jet_Smart_Filters_Advanced_Date_Filter {
 
 		if ( $inside ) {
 			$result[] = array(
-				'realtion' => 'AND',
+				'relation' => 'AND',
 				array(
 					'key'     => $fields[0],
 					'value'   => $values[0],
