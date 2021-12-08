@@ -115,6 +115,25 @@ class Jet_Smart_Filters_Advanced_Date_Filter {
 				),
 			);
 		}
+		
+		// pre-process case 'range_inside' - when range between meta fields
+		if ( 'range_inside' === $type ) {
+			return array(
+				'relation' => 'AND',
+				array(
+					'key'     => $fields[0],
+					'value'   => $values[0],
+					'type'    => 'NUMERIC',
+					'compare' => '<=',
+				),
+				array(
+					'key'     => $fields[1],
+					'value'   => $values[1] - DAY_IN_SECONDS + 1,
+					'type'    => 'NUMERIC',
+					'compare' => '>=',
+				),
+			);
+		}
 
 		switch ( $type ) {
 
