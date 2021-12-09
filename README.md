@@ -6,7 +6,11 @@
 
 Where:
 - `advanced_date` - is the reserved word, you always need to use it.
-- `each` - defines how to filter the data - return item only if all fields inside the range. Other values: `any` - if any field inside the range, `inside` - it adds the item to query results if any of requested field inside the range, or if whole range between this 2 fields, works only if you set filter by 2 dates, `fields_inside` - it adds the item to query results if both post fields are inside the search range, `range_inside` - adds the item to query results if whole search range is between post fields;
+- Parameter which defines how to filter the data. Allowed values:
+  - `any` - if any field inside the range, 
+  - `inside` - it adds the item to query results if any of requested field inside the range, or if whole range between this 2 fields, works only if you set filter by 2 dates,
+  - `each`, `fields_inside` - it adds the item to query results if both post fields are inside the search range, 
+  - `range_inside` - adds the item to query results if whole search range is between post fields;
 - `field-1;field-2` - semicolon-separated list of fields to search by. `any` and `each` types supports any number of passed fields, `inside` type supports only 2 fields.
 
 Examples:
