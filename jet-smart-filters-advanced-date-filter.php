@@ -24,6 +24,7 @@ class Jet_Smart_Filters_Advanced_Date_Filter {
 
 	public function __construct() {
 		add_filter( 'jet-smart-filters/query/final-query', array( $this, 'apply_dates_filter' ), -999 );
+		add_action( 'jet-smart-filters/admin/register-dynamic-query', array( $this, 'helper_dynamic_query' ) );
 	}
 
 	/**
@@ -62,6 +63,7 @@ class Jet_Smart_Filters_Advanced_Date_Filter {
 						$fields = explode( ';', str_replace( '; ', ';', $fields ) );
 					} elseif( $is_new ) {
 						$fields = explode( '__', $fields );
+						$fields = array_filter( $fields );
 					}
 
 					$advanced_query = $this->get_advanced_query( $fields, $meta_query['value'], $type );
@@ -207,6 +209,62 @@ class Jet_Smart_Filters_Advanced_Date_Filter {
 
 		return $result;
 
+	}
+
+	public function helper_dynamic_query( $dynamic_query_manager ) {
+
+		$dynamic_query_item = new class( 'Jet Smart Filters - Advanced date filter' ) {
+			
+			private $label;
+			
+			public function __construct( $label ) {
+				$this->key     = 'advanced_date';
+				$this->label   = $label;
+			}
+
+			public function get_name() {
+				return $this->key;
+			}
+
+			public function get_label() {
+				return $this->label;
+			}
+
+			public function get_extra_args() {
+
+				return array(
+
+					'type' => array(
+						'type'        => 'select',
+						'title'       => 'Filter type',
+						'options'     => array(
+							'any'           => 'Any',
+							'inside'        => 'Inside',
+							'each'          => 'Each',
+							'fields_inside' => 'Fields inside',
+							'range_inside'  => 'Range inside',
+						),
+					),
+					'field1' => array(
+						'type'        => 'text',
+						'title'       => 'Field 1',
+					),
+					'field2' => array(
+						'type'        => 'text',
+						'title'       => 'Field 2 (if needed)',
+					),
+				);
+
+			}
+
+			public function get_delimiter() {
+				return '__';
+			}
+
+		};
+		
+		$dynamic_query_manager->register_item( $dynamic_query_item );
+		
 	}
 
 }
