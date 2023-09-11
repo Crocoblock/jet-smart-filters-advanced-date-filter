@@ -18,8 +18,9 @@ if ( ! defined( 'WPINC' ) ) {
 
 class Jet_Smart_Filters_Advanced_Date_Filter {
 
-	private $base_mask = 'advanced_date::';
-	private $custom_query = null;
+	private $base_mask     = 'advanced_date::';
+	private $new_base_mask = 'advanced_date__';
+	private $custom_query  = null;
 
 	public function __construct() {
 		add_filter( 'jet-smart-filters/query/final-query', array( $this, 'apply_dates_filter' ), -999 );
@@ -36,12 +37,19 @@ class Jet_Smart_Filters_Advanced_Date_Filter {
 
 		foreach ( $query['meta_query'] as $index => $meta_query ) {
 
-			if ( false !== strpos( $meta_query['key'], $this->base_mask ) ) {
+			$is_old = false !== strpos( $meta_query['key'], $this->base_mask );
+			$is_new = false !== strpos( $meta_query['key'], $this->new_base_mask );
+
+			if ( $is_old || $is_new ) {
 
 				$from = $meta_query['value'][0];
 				$to   = $meta_query['value'][1];
 
-				$data = explode( '::', $meta_query['key'] );
+				if ( $is_old ) {
+					$data = explode( '::', $meta_query['key'] );
+				} elseif( $is_new ) {
+					$data = explode( '__', $meta_query['key'], 3 );
+				}
 
 				$type   = ! empty( $data[1] ) ? $data[1] : false;
 				$fields = ! empty( $data[2] ) ? $data[2] : false;
@@ -49,7 +57,13 @@ class Jet_Smart_Filters_Advanced_Date_Filter {
 				if ( $type && $fields ) {
 
 					unset( $query['meta_query'][ $index ] );
-					$fields = explode( ';', str_replace( '; ', ';', $fields ) );
+					
+					if ( $is_old ) {
+						$fields = explode( ';', str_replace( '; ', ';', $fields ) );
+					} elseif( $is_new ) {
+						$fields = explode( '__', $fields );
+					}
+
 					$advanced_query = $this->get_advanced_query( $fields, $meta_query['value'], $type );
 
 					if ( $this->custom_query ) {
