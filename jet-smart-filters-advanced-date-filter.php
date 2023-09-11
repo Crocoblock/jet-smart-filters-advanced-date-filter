@@ -236,13 +236,12 @@ class Jet_Smart_Filters_Advanced_Date_Filter {
 
 					'type' => array(
 						'type'        => 'select',
-						'title'       => 'Filter type',
+						'title'       => 'Include type',
 						'options'     => array(
-							'any'           => 'Any',
-							'inside'        => 'Inside',
-							'each'          => 'Each',
-							'fields_inside' => 'Fields inside',
-							'range_inside'  => 'Range inside',
+							'any'           => 'Any of the fields is inside of the filter range (use with one or two fields)',
+							'each'          => 'Each of the fields is inside the filter range (use with one or two fields)',
+							'inside'        => 'Any of the fields is inside of the filter range OR the whole range is between fields (two fields required)',
+							'range_inside'  => 'The whole filter range is between fields (two fields required)',
 						),
 					),
 					'field1' => array(
